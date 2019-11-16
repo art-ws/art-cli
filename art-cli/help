@@ -1,5 +1,5 @@
 echo "art - CLI tool for art-ws.org ( See more details at https://github.com/art-ws/art-cli )"
-echo  "art [command/path] help - get command help" 
+echo "art [command/path] help - get [command/path] help" 
 echo 
 echo "Copyright (c) 2019 art-ws.org"
 echo "License: https://www.apache.org/licenses/LICENSE-2.0"
