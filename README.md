@@ -6,4 +6,5 @@
 
 ## Dependencies
 
-- `git`
+- [Git](https://git-scm.com/download/linux)
+- [Ubuntu](https://ubuntu.com/download)
