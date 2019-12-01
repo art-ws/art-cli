@@ -1,0 +1,3 @@
+#!/bin/bash
+
+art _git-install $1 github.com:art-ws
