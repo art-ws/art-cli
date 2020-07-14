@@ -1,8 +1,12 @@
 # art-cli
 
-## Installation
+## Install
 
-`curl -sL https://raw.githubusercontent.com/art-ws/art-cli/master/setup_2.x | bash -`
+`curl -sL https://raw.githubusercontent.com/art-ws/art-cli/master/install.sh | bash -`
+
+## Uninstall
+
+`curl -sL https://raw.githubusercontent.com/art-ws/art-cli/master/uninstall.sh | bash -`
 
 ## Requirements
 

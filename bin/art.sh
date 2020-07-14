@@ -1,23 +1,23 @@
 #!/bin/bash
 
-ART_USER_NAME="$USER"
-ART_USER_EMAIL="${ART_USER_NAME}@`hostname`"
-ART_ROOT=/opt/art/p
-[ -f ~/.artrc ] && source ~/.artrc
-
-ART_CORE_HOME=$ART_ROOT/art-cli
-source $ART_CORE_HOME/bin/ENV
-
-debug=0
-
-log(){
-  [ $debug == "1" ] && echo "DEBUG: $@"
-}
-
 die() {
   echo "$@" 1>&2
   exit 1
 }
+
+# try to load ~/.artrc
+[ -f ~/.artrc ] && source ~/.artrc
+
+# define core env veriables
+[ -z $ART_USER_NAME  ] && ART_USER_NAME="$USER"
+[ -z $ART_USER_EMAIL ] && ART_USER_EMAIL="${ART_USER_NAME}@`hostname`"
+[ -z $ART_ROOT ] && ART_ROOT=/opt/art
+[ -z $ART_REPO_ROOT ] && ART_REPO_ROOT=$ART_ROOT/p
+
+[ ! -d $ART_REPO_ROOT ] && die "Directory '$ART_REPO_ROOT' not exists"
+
+ARTCLI_HOME=$ART_ROOT/art-cli
+source $ARTCLI_HOME/bin/ENV
 
 dump_args(){
  local n=0
