@@ -1,0 +1,15 @@
+#!/bin/bash
+
+dump_args(){
+ local n=0
+ while [ "$1" ]
+ do
+  ((n+=1))
+  echo "$n = [$1]"
+  shift
+ done
+}
+
+echo "You are running script '$ARTCLI_ACTION' for project [$ARTCLI_PROJECT]($ARTCLI_PROJECT_PATH)"
+echo "Args:"
+dump_args $@

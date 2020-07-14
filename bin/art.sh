@@ -68,12 +68,12 @@ exec_project_dir(){
 
   check_var ARTCLI_CONST_EXEC
 
-  local n=0
+  local n=0 
   for f in `ls $full_path | grep -v "^_"`
   do
     n=$((n+1))
     if [ -f $full_path/$f ] ; then
-      echo -e "\E[1;39m$n) $ARTCLI_CONST_EXEC ${prefix}${f}"
+      echo -e "\E[1;39m$n) . $ARTCLI_CONST_EXEC ${prefix}${f}"
     fi
     if [ -d $full_path/$f ] ; then
       local num=`find $full_path/$f -type f | wc -l`
@@ -228,7 +228,7 @@ try_execute(){
   check_var action
   shift
   local project=`lookup_project $action`
-  [ $? -eq 0 ] || die "Action '$action' not found"
+  [ -z $project ] && die "Action '$action' not found"
   exec_project "$project" "$action" "$@"
 }
 
