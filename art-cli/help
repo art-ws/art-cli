@@ -1,4 +1,5 @@
 echo "art - CLI tool for art-ws.org ( See more details at https://github.com/art-ws/art-cli )"
+echo "Version: $ARTCLI_CONST_VERSION"
 echo "art [command/path] help - get [command/path] help" 
 echo 
 echo "Copyright (c) 2020 art-ws.org"

@@ -1,1 +1,1 @@
-echo "Version $ART_CLI_VERSION"
+echo "v$ARTCLI_CONST_VERSION"
