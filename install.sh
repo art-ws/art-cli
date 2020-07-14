@@ -52,12 +52,12 @@ setup(){
     mk_home && \
     clone_repo && \
     install_artcli && \
-    echo "art-cli installed sucesfully at $ARTCLI_HOME" || \
+    echo "art-cli installed sucesfully to $ARTCLI_HOME" || \
     echo "art-cli installation failed"
 }
 
 verify(){
-  echo "Verifying..."
+  echo "Verifying installation..."
   readlink -v $ARTCLI_BIN && \
     art help && \
     art version && \

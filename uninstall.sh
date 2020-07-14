@@ -7,7 +7,6 @@
 [ -z $ART_REPO_ROOT ] && ART_REPO_ROOT=$ART_ROOT/p
 
 [ -z $ARTCLI_HOME ] && ARTCLI_HOME=$ART_REPO_ROOT/art-cli
-[ -z $ARTCLI_EXEC ] && ARTCLI_EXEC=$ARTCLI_HOME/bin/art.sh
 [ -z $ARTCLI_BIN ]  && ARTCLI_BIN=/usr/local/bin/art
 
 rm_dir(){
