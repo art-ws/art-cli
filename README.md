@@ -8,6 +8,7 @@ Tool to run and organize scripts in hierarchy with single entry point.
 
 - Script is just a script.
 - Flat namespace mean that all virtual script paths should be unique globally.
+- All scripts is near your project files but available in any CLI context globally.
 - Organize scripts in virtual hierarchy per projects with flat namespace.
 - Virtual paths reflection allow to view all available scripts per projects:
   - If specify the script path - `art-cli` run the script with parameters
