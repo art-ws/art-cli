@@ -1,0 +1,23 @@
+#!/bin/bash
+
+main(){
+  local project_name=$1
+  check_var project_name 
+  
+  local path=`lookup_path_at_project $project_name .`
+  [ -z $path ] && die "Directory or link for project [ $project_name ] not found at $ART_REPO_ROOT"
+ 
+  local tmp=`dirname $path`
+  local dir_path=`dirname $tmp`
+  local link_path=`readlink -f $dir_path`
+
+  if [ $dir_path = $link_path  ] 
+  then
+    echo $dir_path
+  else
+    echo $link_path
+  fi
+  return 0  
+}
+
+main $@

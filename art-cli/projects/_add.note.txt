@@ -1,1 +1,1 @@
-<project path>* <project name> - Add new project
+<project path>* <project name> - Add project
