@@ -28,11 +28,13 @@ uninstall(){
   return 0
 }
 
-[ -d $ART_ROOT ] && \
-  echo "You are going to delete folder $ART_ROOT and whole it content." && \
-  echo "Directories:" && \
-  ls -l $ART_ROOT && \
+if [ -d $ART_ROOT ] 
+then 
+  echo "You are going to delete folder $ART_ROOT and whole it content." 
+  echo "Directories:" 
+  ls -l $ART_ROOT
   echo ""
+fi
 
 read -p "Continue (y/n) ?" choice
 
