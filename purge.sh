@@ -15,7 +15,7 @@ rm_dir(){
 }
 
 rm_artcli(){
-  [ -f $ARTCLI_BIN ] && sudo rm -f $ARTCLI_BIN 
+  [ -f $ARTCLI_BIN ] && sudo rm -f $ARTCLI_BIN
   echo "File $ARTCLI_BIN not exists"
 }
 
@@ -25,7 +25,7 @@ uninstall(){
   rm_dir $ARTCLI_HOME
   rm_dir $ART_REPO_ROOT
   rm_dir $ART_ROOT
-  return 0  
+  return 0
 }
 
 [ -d $ART_ROOT ] && \
