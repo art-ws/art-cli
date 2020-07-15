@@ -57,7 +57,7 @@ exec_project_dir(){
   local prefix=""
   [ "$exec_dir" != "." ] && prefix="$exec_dir/"
 
-  echo -e "\E[1;34m[$project_name]"
+  echo -e "\E[1;34m[ $project_name ]"
 
   check_var ARTCLI_CONST_ABOUT_FILE
 
@@ -73,7 +73,10 @@ exec_project_dir(){
   do
     n=$((n+1))
     if [ -f $full_path/$f ] ; then
-      echo -e "\E[1;39m$n) . $ARTCLI_CONST_EXEC ${prefix}${f}"
+      local note_path="$full_path/_$f.note.txt"
+      local note=""
+      [ -f $note_path ] && note=`cat $note_path`
+      echo -e "\E[1;39m$n) . $ARTCLI_CONST_EXEC ${prefix}${f} $note"
     fi
     if [ -d $full_path/$f ] ; then
       local num=`find $full_path/$f -type f | wc -l`
@@ -102,7 +105,7 @@ exec_project_file(){
   local before_file="$ARTCLI_ACTION_DIR_PATH/$ARTCLI_CONST_BEFORE_FILE"
   [ -f "$before_file" ] && source $before_file
 
-  local help_file=$ARTCLI_ACTION_DIR_PATH/"_$ARTCLI_ACTION_FILE_NAME.txt"
+  local help_file=$ARTCLI_ACTION_DIR_PATH/"_$ARTCLI_ACTION_FILE_NAME.help.txt"
   if [ -f $help_file ] && [ "$1" == "help" ];
   then
     cat $help_file

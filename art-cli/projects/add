@@ -1,0 +1,24 @@
+#!/bin/bash
+
+main(){
+  local link_path=$1
+  local project_name=$2
+
+  check_dir $link_path
+  [ -z $project_name ] && project_name=`basename $link_path`
+  check_var project_name
+
+  check_var ART_REPO_ROOT
+  check_dir $ART_REPO_ROOT
+
+  local dir_path="$ART_REPO_ROOT/$project_name"
+  
+  [ -d $dir_path ] && die "Project [ $project_name ] already exists at $ART_REPO_ROOT"
+
+  ln -s $link_path $dir_path
+
+  echo "Project [ $project_name ] $dir_path has been created ( $link_path )"
+  return 0  
+}
+
+main $@
