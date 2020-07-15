@@ -36,9 +36,9 @@ then
   echo "---"
 fi
 
-read -p "Continue (y/n) ?" choice
+read -p 'Continue (y/n)' choice
 
 case "$choice" in
-  y|Y ) uninstall;;
-  * ) echo "Nothing has been deleted.";;
+  y|Y) uninstall;;
+  *) echo "Nothing has been deleted.";;
 esac
