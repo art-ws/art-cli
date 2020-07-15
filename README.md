@@ -90,15 +90,15 @@ user@ubuntu:~$ art apps
 1) art . apps/run
 ```
 
-## Configuration
+## Setup
 
 ### Install
 
-`curl -sL https://raw.githubusercontent.com/art-ws/art-cli/master/install.sh | bash -`
+`curl -s https://raw.githubusercontent.com/art-ws/art-cli/master/install.sh | bash -`
 
 ### Uninstall
 
-`curl -sL https://raw.githubusercontent.com/art-ws/art-cli/master/uninstall.sh | bash -`
+`curl -s https://raw.githubusercontent.com/art-ws/art-cli/master/uninstall.sh | bash -`
 
 ### Requirements
 

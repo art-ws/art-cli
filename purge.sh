@@ -31,11 +31,11 @@ uninstall(){
 [ -d $ART_ROOT ] && \
   echo "You are going to delete folder $ART_ROOT and whole it content." && \
   echo "Directories:" && \
-  ls $ART_ROOT && \
+  ls -l $ART_ROOT && \
   echo ""
 
 read -p "Continue (y/n) ?" choice
 case "$choice" in
-  y|Y) uninstall;;
-  *) echo "Nothing has been deleted.";;
+  y|Y ) uninstall;;
+  * ) echo "Nothing has been deleted.";;
 esac
