@@ -94,11 +94,11 @@ user@ubuntu:~$ art apps
 
 ### Install
 
-`curl -s https://raw.githubusercontent.com/art-ws/art-cli/master/install.sh | bash -`
+`bash <(curl -s https://raw.githubusercontent.com/art-ws/art-cli/master/install.sh)`
 
 ### Uninstall
 
-`curl -s https://raw.githubusercontent.com/art-ws/art-cli/master/uninstall.sh | bash -`
+`bash <(curl -s https://raw.githubusercontent.com/art-ws/art-cli/master/uninstall.sh)`
 
 ### Requirements
 
