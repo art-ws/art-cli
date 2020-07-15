@@ -33,7 +33,7 @@ then
   echo "You are going to delete folder $ART_ROOT and whole it content." 
   echo "Directories:" 
   ls -l $ART_ROOT
-  echo ""
+  echo "---"
 fi
 
 read -p "Continue (y/n) ?" choice
