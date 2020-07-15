@@ -10,7 +10,7 @@
 [ -z $ARTCLI_BIN ]  && ARTCLI_BIN=/usr/local/bin/art
 
 rm_dir(){
-  [ -d "$1" ] && sudo rm -fR "$1"
+  [ -d "$1" ] && sudo rm -fR "$1" && echo "$1 removed."
   echo "Directory $1 not exists"
 }
 
@@ -30,10 +30,12 @@ uninstall(){
 
 [ -d $ART_ROOT ] && \
   echo "You are going to delete folder $ART_ROOT and whole it content." && \
-  ls $ART_ROOT
-  
+  echo "Directories:" && \
+  ls $ART_ROOT && \
+  echo ""
+
 read -p "Continue (y/n) ?" choice
-case "$choice" in 
-  y|Y ) uninstall ;;
-  * ) echo "Nothing has been deleted." ;;
+case "$choice" in
+  y|Y) uninstall;;
+  *) echo "Nothing has been deleted.";;
 esac
