@@ -36,7 +36,7 @@ then
   echo "---"
 fi
 
-read -p 'Continue (y/n)' choice
+read -p 'Continue (y/n)?' choice
 
 case "$choice" in
   y|Y ) uninstall;;
