@@ -72,17 +72,17 @@ exec_project_dir(){
   local n=0 
   for f in `ls $full_path | grep -v "^\."`
   do
-    n=$((n+1))
-    
-    if [ -f $full_path/$f ] ; then
+    n=$((n+1))    
+    local item_path="$full_path/$f"
+
+    if [ -f $item_path ] ; then
       local note=""
       local note_path="$full_path/.$f.note.txt"      
       [ -f $note_path ] && note=`cat $note_path`
       echo -e "\E[1;39m$n) . $ARTCLI_CONST_EXEC ${prefix}${f} $note"
     fi
 
-    if [ -d $full_path/$f ] ; then
-      local item_path="$full_path/$f"
+    if [ -d $item_path ] ; then      
       local link_path=`readlink -f $item_path`
       local num=`find $link_path -type f | wc -l`
       echo -e "\E[1;33m$n) * $ARTCLI_CONST_EXEC ${prefix}${f} - $num command(s)"
