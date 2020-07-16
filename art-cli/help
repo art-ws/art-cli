@@ -1,6 +1,9 @@
-echo "art - CLI tool for art-ws.org ( See more details at https://github.com/art-ws/art-cli )"
-echo "Version: $ARTCLI_CONST_VERSION"
-echo "art [command/path] help - get [command/path] help" 
-echo 
-echo "Copyright (c) 2020 art-ws.org"
-echo "License: https://www.apache.org/licenses/LICENSE-2.0"
+#!/bin/bash
+
+echo "$ARTCLI_CONST_EXEC - CLI tool for art-ws.org ( See more details at https://github.com/art-ws/art-cli )
+Version: $ARTCLI_CONST_VERSION
+art <command/path> help - get <command/path> help 
+ 
+Copyright (c) 2020 art-ws.org
+License: https://www.apache.org/licenses/LICENSE-2.0
+"

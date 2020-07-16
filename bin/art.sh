@@ -32,6 +32,7 @@ check_var(){
 
 [ -z $ART_ROOT ] && ART_ROOT=/opt/art
 [ -z $ART_REPO_ROOT ] && ART_REPO_ROOT=$ART_ROOT/p
+
 ARTCLI_HOME=$ART_REPO_ROOT/art-cli
 
 check_dir $ART_REPO_ROOT
@@ -69,19 +70,24 @@ exec_project_dir(){
   check_var ARTCLI_CONST_EXEC
 
   local n=0 
-  for f in `ls $full_path | grep -v "^_"`
+  for f in `ls $full_path | grep -v "^\."`
   do
     n=$((n+1))
+    
     if [ -f $full_path/$f ] ; then
-      local note_path="$full_path/_$f.note.txt"
       local note=""
+      local note_path="$full_path/.$f.note.txt"      
       [ -f $note_path ] && note=`cat $note_path`
       echo -e "\E[1;39m$n) . $ARTCLI_CONST_EXEC ${prefix}${f} $note"
     fi
+
     if [ -d $full_path/$f ] ; then
-      local num=`find $full_path/$f -type f | wc -l`
+      local item_path="$full_path/$f"
+      local link_path=`readlink -f $item_path`
+      local num=`find $link_path -type f | wc -l`
       echo -e "\E[1;33m$n) * $ARTCLI_CONST_EXEC ${prefix}${f} - $num command(s)"
     fi
+
   done
   echo -e "\E[0;37m"
 }
@@ -105,7 +111,7 @@ exec_project_file(){
   local before_file="$ARTCLI_ACTION_DIR_PATH/$ARTCLI_CONST_BEFORE_FILE"
   [ -f "$before_file" ] && source $before_file
 
-  local help_file=$ARTCLI_ACTION_DIR_PATH/"_$ARTCLI_ACTION_FILE_NAME.help.txt"
+  local help_file="$ARTCLI_ACTION_DIR_PATH/.$ARTCLI_ACTION_FILE_NAME.help.txt"
   if [ -f $help_file ] && [ "$1" == "help" ];
   then
     cat $help_file

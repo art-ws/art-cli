@@ -1,1 +1,0 @@
-Dump available art-cli environment context variables
