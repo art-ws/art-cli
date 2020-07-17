@@ -6,11 +6,13 @@ die() {
 }
 
 check_dir(){
+  [ -z $1 ] && die "Directory path not specified"
   [ ! -d $1 ] && die "Required directory $1 not exists"
   return 0
 }
 
 check_file(){
+  [ -z $1 ] && die "File path not specified"
   [ ! -f $1 ] && die "Required file $1 not exists"
   return 0
 }
