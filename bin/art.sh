@@ -27,14 +27,6 @@ check_var(){
   return 0
 }
 
-check_var_old(){
-  [ -z $1 ] && die "Variable name not specified"
-  local varname=$1
-  # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
-  [ -z  ${!varname} ] && die "Required variable '$varname' not defined"  
-  return 0
-}
-
 # try to load ~/.artrc
 [ -f ~/.artrc ] && source ~/.artrc
 
