@@ -1,1 +1,0 @@
-<action/path> - Execute commands from a file. (same as source `art a/actions/path <action/path>`)
