@@ -1,0 +1,17 @@
+#!/bin/bash
+
+main(){
+  local action=$1
+  check_var action
+
+  local project=`lookup_project $action`
+  [ -z $project ] && die "Action '$action' not found"
+
+  local action_path=`lookup_path_at_project $project $action`
+  [ ! -f $action_path ] && die "Action '$action' not found for project [ $project ]"
+  
+  echo $action_path
+  return 0
+}
+
+main $@

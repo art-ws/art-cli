@@ -1,0 +1,1 @@
+<command/path> - Path to <command/path> file (resolve links)

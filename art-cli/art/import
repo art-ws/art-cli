@@ -1,0 +1,11 @@
+#!/bin/bash
+
+main(){
+  local action=$1
+  check_var action
+
+  local path=`art a/actions/path $action`
+  source $path
+}
+
+main $@

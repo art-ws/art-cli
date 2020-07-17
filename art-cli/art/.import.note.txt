@@ -1,0 +1,1 @@
+<action/path> - same as source `art a/actions/path <action/path>`

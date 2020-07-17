@@ -1,0 +1,1 @@
+<command/path> <alias name> - Create alias for <command/path>
