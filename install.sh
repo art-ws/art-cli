@@ -36,7 +36,7 @@ clone_repo(){
   local src=https://github.com/art-ws/art-cli.git
   [ ! -d "$ARTCLI_HOME/.git" ] && git clone $src "$ARTCLI_HOME"
   [ ! -d "$ARTCLI_HOME/.git" ] && die "Can't clone repository from $src"
-  [ -d "$ARTCLI_HOME" ] && chmod -R 775 "$ARTCLI_HOME"
+  [ -d "$ARTCLI_HOME" ] && chmod -R 777 "$ARTCLI_HOME"
 }
 
 install_artcli(){
