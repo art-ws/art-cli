@@ -1,5 +1,6 @@
 #!/bin/bash
 
+print_help(){
 echo "$ARTCLI_CONST_EXEC - CLI tool for art-ws.org ( See more details at https://github.com/art-ws/art-cli )
 Version: $ARTCLI_CONST_VERSION
 art <command/path> help - get <command/path> help 
@@ -7,3 +8,11 @@ art <command/path> help - get <command/path> help
 Copyright (c) 2020 art-ws.org
 License: https://www.apache.org/licenses/LICENSE-2.0
 "
+}
+
+main(){
+  local action=$1
+  [ -z $action ] && print_help || art $action help 
+}
+
+main $@

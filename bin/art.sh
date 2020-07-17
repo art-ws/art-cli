@@ -112,10 +112,15 @@ exec_project_file(){
   [ -f "$before_file" ] && source $before_file
 
   local help_file="$ARTCLI_ACTION_DIR_PATH/.$ARTCLI_ACTION_FILE_NAME.help.txt"
-  if [ -f $help_file ] && [ "$1" == "help" ];
-  then
-    cat $help_file
-    return 0
+  
+  if [ "$1" == "help" ]; then
+    if [ -f $help_file ]; then
+      cat $help_file
+      return 0
+    else
+      echo "Help file $help_file not exists"
+      return 1    
+    fi
   else
     source $full_path
     return $?
