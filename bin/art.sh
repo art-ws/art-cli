@@ -19,6 +19,16 @@ check_file(){
 
 check_var(){
   [ -z $1 ] && die "Variable name not specified"
+  for varname in $@
+  do
+    # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+    [ -z  ${!varname} ] && die "Required variable '$varname' not defined"
+  done
+  return 0
+}
+
+check_var_old(){
+  [ -z $1 ] && die "Variable name not specified"
   local varname=$1
   # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
   [ -z  ${!varname} ] && die "Required variable '$varname' not defined"  
