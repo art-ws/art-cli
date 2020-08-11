@@ -42,7 +42,7 @@ list_projects(){
 starts_with() { case $2 in "$1"*) true;; *) false;; esac; }
 
 # https://unix.stackexchange.com/questions/412868/bash-reverse-an-array#412874
-reverse_array() {
+array_reverse() {
   declare -n arr="$1" rev="$2"
   for i in "${arr[@]}"
   do
@@ -50,88 +50,82 @@ reverse_array() {
   done
 }
 
-filter_array_till_break_item() {
-  # first argument is the array to filter
-  # second is the output array
-  declare -n arr="$1" res="$2"
-  local break_item="$3"
-  for item in "${arr[@]}"
-  do
-    if [ $item = $break_item ] 
-    then
-      break
-    else
-      res+=("$item")
-    fi    
+# https://www.tutorialkart.com/bash-shell-scripting/bash-split-string/    
+split_string_to_array() {
+  local s="$1"
+  local delim="$2"
+  declare -n result="$3"
+  oldIFS="$IFS"
+  IFS="$delim"
+  result=($s)
+  IFS="$oldIFS"
+}
+
+# https://stackoverflow.com/questions/16461656/how-to-pass-array-as-an-argument-to-a-function-in-bash#16461878
+array_join(){
+  local delim="$1"
+  shift
+  local arr=("$@")
+  
+  local result=""
+  local len=${#arr[@]}
+  len=$((len-1))
+  for i in $(seq 0 $len); 
+  do 
+    [ $i = 0 ] && d="" || d="$delim"
+    result="${result}${d}${arr[i]}"
   done
+  echo "$result"
 }
 
 resolve_relative_action(){
+  
+  array_trim_till_break_item() {
+    declare -n input="$1" result="$2"
+    local break_item="$3"
+    check_var break_item  
+    for item in "${input[@]}"
+    do 
+      [ $item = $break_item ] && break || result+=("$item")    
+    done
+  }
+
   local action="$1"
   local caller="$2"
   check_var ARTCLI_CONST_DIR action 
-  
+    
   if starts_with "." "$action" && [ ! -z $caller ]  
   then
     local delim="/"
-    # https://www.tutorialkart.com/bash-shell-scripting/bash-split-string/    
-    oldIFS="$IFS"
-    IFS="$delim"
-    arr_action=($action)
-    arr_caller=($caller)
-    IFS="$oldIFS"
+    split_string_to_array $action $delim arr_action
+    split_string_to_array $caller $delim arr_caller
 
-    reverse_array arr_caller arr_rev_caller
-    filter_array_till_break_item arr_rev_caller arr1 "$ARTCLI_CONST_DIR"
-    reverse_array arr1 arr2
-    local len=${#arr2[@]}
+    array_reverse arr_caller arr_caller_reverse
+    array_trim_till_break_item arr_caller_reverse arr_tmp1 "$ARTCLI_CONST_DIR"
+    array_reverse arr_tmp1 arr_tmp2
+    local len=${#arr_tmp2[@]}
 
-    arr_path=()
-    # https://linuxconfig.org/how-to-use-arrays-in-bash-script
-    
-    arr_path2=()
+    arr_result=()    
+    arr_prefix=()
     for item in "${arr_action[@]}"
     do
       case $item  in
-        ".")
-          len=$((len-1))
-       	  ;;
-        
-        "..")
-          len=$((len-2))
-          ;;
-
-     		*)
-          arr_path2+=("$item")
+        ".")  len=$((len-1)) ;;        
+        "..") len=$((len-2)) ;;
+     		*) arr_prefix+=("$item")
       esac
     done
 
-    # https://stackoverflow.com/questions/169511/how-do-i-iterate-over-a-range-of-numbers-defined-by-variables-in-bash#169517
     len=$((len-1))
-    for i in $(seq 0 $len); 
-    do 
-      arr_path+=("${arr2[i]}")
-    done
+    for i in $(seq 0 $len); do arr_result+=("${arr_tmp2[i]}"); done
+    for item in "${arr_prefix[@]}"; do arr_result+=("$item"); done
+   
+    local resolved_action=`array_join "$delim" "${arr_result[@]}"`
 
-    for item in "${arr_path2[@]}"
-    do
-      arr_path+=("$item")
-    done
-
-    local s=""
-    local len1=${#arr_path[@]}
-    len1=$((len1-1))
-    for i in $(seq 0 $len1); 
-    do 
-      [ $i = 0 ] && dlm="" || dlm="$delim"
-      s="${s}${dlm}${arr_path[i]}"
-    done
-
-    echo "$s"
+    echo "$resolved_action"
   else
     echo "$action"
   fi
-
   
   return 0
 }
