@@ -1,20 +1,12 @@
 #!/bin/bash
 
-die() {
+echo_stderr() {
   echo "$@" 1>&2
+}
+
+die() {
+  echo "$@" 1>&2 
   exit 1
-}
-
-check_dir(){
-  [ -z $1 ] && die "Directory path not specified"
-  [ ! -d $1 ] && die "Required directory $1 not exists"
-  return 0
-}
-
-check_file(){
-  [ -z $1 ] && die "File path not specified"
-  [ ! -f $1 ] && die "Required file $1 not exists"
-  return 0
 }
 
 check_var(){
@@ -27,22 +19,190 @@ check_var(){
   return 0
 }
 
-# try to load ~/.artrc
-[ -f ~/.artrc ] && source ~/.artrc
+check_dir(){
+  [ -z $1 ] && die "Directory path not specified"
+  for dir in $@
+  do
+    [ ! -d $dir ] && die "Directory path $dir not exists"
+  done  
+  return 0
+}
 
-# define core env veriables
-[ -z $ART_USER_NAME  ] && ART_USER_NAME="$USER"
-[ -z $ART_USER_EMAIL ] && ART_USER_EMAIL="${ART_USER_NAME}@`hostname`"
+check_file(){
+  [ -z $1 ] && die "File path not specified"
+  [ ! -f $1 ] && die "Required file $1 not exists"
+  return 0
+}
 
-[ -z $ART_ROOT ] && ART_ROOT=/opt/art
-[ -z $ART_REPO_ROOT ] && ART_REPO_ROOT=$ART_ROOT/p
+list_projects(){
+  check_dir $ART_REPO_ROOT
+  ls -1 $ART_REPO_ROOT
+}
 
-ARTCLI_HOME=$ART_REPO_ROOT/art-cli
+starts_with() { case $2 in "$1"*) true;; *) false;; esac; }
 
-check_dir $ART_REPO_ROOT
-check_dir $ARTCLI_HOME
+# https://unix.stackexchange.com/questions/412868/bash-reverse-an-array#412874
+reverse_array() {
+  declare -n arr="$1" rev="$2"
+  for i in "${arr[@]}"
+  do
+    rev=("$i" "${rev[@]}")
+  done
+}
 
-check_file $ARTCLI_HOME/bin/consts && source $ARTCLI_HOME/bin/consts 
+filter_array_till_break_item() {
+  # first argument is the array to filter
+  # second is the output array
+  declare -n arr="$1" res="$2"
+  local break_item="$3"
+  for item in "${arr[@]}"
+  do
+    if [ $item = $break_item ] 
+    then
+      break
+    else
+      res+=("$item")
+    fi    
+  done
+}
+
+resolve_relative_action(){
+  local action="$1"
+  local caller="$2"
+  check_var ARTCLI_CONST_DIR action 
+  
+  if starts_with "." "$action" && [ ! -z $caller ]  
+  then
+    local delim="/"
+    # https://www.tutorialkart.com/bash-shell-scripting/bash-split-string/    
+    oldIFS="$IFS"
+    IFS="$delim"
+    arr_action=($action)
+    arr_caller=($caller)
+    IFS="$oldIFS"
+
+    reverse_array arr_caller arr_rev_caller
+    filter_array_till_break_item arr_rev_caller arr1 "$ARTCLI_CONST_DIR"
+    reverse_array arr1 arr2
+    local len=${#arr2[@]}
+
+    arr_path=()
+    # https://linuxconfig.org/how-to-use-arrays-in-bash-script
+    
+    arr_path2=()
+    for item in "${arr_action[@]}"
+    do
+      case $item  in
+        ".")
+          len=$((len-1))
+       	  ;;
+        
+        "..")
+          len=$((len-2))
+          ;;
+
+     		*)
+          arr_path2+=("$item")
+      esac
+    done
+
+    # https://stackoverflow.com/questions/169511/how-do-i-iterate-over-a-range-of-numbers-defined-by-variables-in-bash#169517
+    len=$((len-1))
+    for i in $(seq 0 $len); 
+    do 
+      arr_path+=("${arr2[i]}")
+    done
+
+    for item in "${arr_path2[@]}"
+    do
+      arr_path+=("$item")
+    done
+
+    local s=""
+    local len1=${#arr_path[@]}
+    len1=$((len1-1))
+    for i in $(seq 0 $len1); 
+    do 
+      [ $i = 0 ] && dlm="" || dlm="$delim"
+      s="${s}${dlm}${arr_path[i]}"
+    done
+
+    echo "$s"
+  else
+    echo "$action"
+  fi
+
+  
+  return 0
+}
+
+lookup_path_at_project(){
+  local project="$1"
+  local action="$2"
+
+  check_var ARTCLI_CONST_DIR project action
+  check_dir $ART_REPO_ROOT
+  
+  local base_path="$ART_REPO_ROOT/$project/$ARTCLI_CONST_DIR"    
+  
+  local resolved_action=`resolve_relative_action $action $ARTCLI_CALLER`
+  
+  local full_path="$base_path/$resolved_action"
+  
+  # http://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
+  if [ -f "$full_path" ] || [ -d "$full_path" ]
+  then
+    echo "$full_path"
+    return 0
+  fi
+
+  return 1
+}
+
+lookup_path(){
+  local path=$1
+  check_var path
+
+  for p in `list_projects`
+  do
+    full_path=`lookup_path_at_project $p $path`
+    if [ $? -eq 0 ] && [ ! -z "$full_path" ]
+    then
+      echo "$full_path"
+      return 0
+    fi
+  done
+  return 1
+}
+
+lookup_project(){
+  local action="$1"
+  check_var action
+  
+  for p in `list_projects`
+  do
+    local full_path=`lookup_path_at_project $p $action`
+    if [ $? -eq 0 ] && [ ! -z "$full_path" ]; then
+      echo "$p"
+      return 0
+    fi
+  done
+  return 1
+}
+
+execute(){
+  local path=$1
+  check_var path
+  shift
+  
+  full_path=`lookup_path $path`
+  if [ $? -eq 0 ] && [ ! -z "$full_path" ]
+  then
+    source $full_path
+  else
+    die "Action '$path' not found"
+  fi
+}
 
 exec_project_dir(){
   local exec_dir=$1
@@ -97,20 +257,18 @@ exec_project_dir(){
 }
 
 exec_project_file(){
-  local exec_file=$1
-  check_var exec_file
+  local resolved_action="$1"
+  check_var resolved_action
   shift
 
   check_var ARTCLI_PROJECT_PATH
-
-  local full_path="$ARTCLI_PROJECT_PATH/$exec_file"
+  
+  local full_path="$ARTCLI_PROJECT_PATH/$resolved_action"
 
   ARTCLI_ACTION_DIR_PATH=`dirname $full_path`
   ARTCLI_ACTION_FILE_NAME=`basename $full_path`
   
-  check_var ARTCLI_ACTION_DIR_PATH
-  check_var ARTCLI_ACTION_FILE_NAME
-  check_var ARTCLI_CONST_BEFORE_FILE
+  check_var ARTCLI_ACTION_DIR_PATH ARTCLI_ACTION_FILE_NAME ARTCLI_CONST_BEFORE_FILE
 
   local before_file="$ARTCLI_ACTION_DIR_PATH/$ARTCLI_CONST_BEFORE_FILE"
   [ -f "$before_file" ] && source $before_file
@@ -126,7 +284,7 @@ exec_project_file(){
       return 1    
     fi
   else
-    source $full_path
+    ARTCLI_CALLER="$full_path" source $full_path
     return $?
   fi
 
@@ -134,7 +292,7 @@ exec_project_file(){
 }
 
 exec_project(){
-  local project=$1
+  local project="$1"
   check_var project
   shift
 
@@ -144,101 +302,32 @@ exec_project(){
   local project_root_path="$ART_REPO_ROOT/$project"
   local project_path="$project_root_path/$ARTCLI_CONST_DIR"
   
-  local path=$1
-  check_var path
+  local action="$1"
+  check_var action
   shift
-
-  local full_path="$project_path/$path"
+  
+  local resolved_action=`resolve_relative_action $action $ARTCLI_CALLER`
+  
+  local full_path="$project_path/$resolved_action"
 
   ARTCLI_PROJECT_ROOT="$project_root_path"
   ARTCLI_PROJECT="$project"
   ARTCLI_PROJECT_PATH="$project_path"
-  ARTCLI_ACTION="$path"
+  ARTCLI_ACTION="$action"
+  ARTCLI_ACTION_RESOLVED="$resolved_action"
 
-  check_var ARTCLI_PROJECT_ROOT
-  check_var ARTCLI_PROJECT
-  check_var ARTCLI_PROJECT_PATH
-  check_var ARTCLI_ACTION
+  check_var ARTCLI_PROJECT_ROOT ARTCLI_PROJECT \
+    ARTCLI_PROJECT_PATH ARTCLI_ACTION ARTCLI_ACTION_RESOLVED
 
   if [ -f $full_path ]; then
-    exec_project_file "$path" "$@"
+    exec_project_file "$resolved_action" "$@"
     return $?
   elif [ -d $full_path ]; then
-    exec_project_dir "$path" "$@"
+    exec_project_dir "$resolved_action" "$@"
     return $?
   fi
 
   return 1
-}
-
-list_projects(){
-  check_dir $ART_REPO_ROOT
-  ls -1 $ART_REPO_ROOT
-}
-
-lookup_path_at_project(){
-  local project=$1
-  local path=$2
-
-  check_var project
-  check_var path
-  check_dir $ART_REPO_ROOT
-  check_var ARTCLI_CONST_DIR
-
-  local full_path="$ART_REPO_ROOT/$project/$ARTCLI_CONST_DIR/$path"
-  # http://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
-  if [ -f "$full_path" ] || [ -d "$full_path" ]
-  then
-    echo "$full_path"
-    return 0
-  fi
-
-  return 1
-}
-
-lookup_path(){
-  local path=$1
-  check_var path
-
-  for p in `list_projects`
-  do
-    full_path=`lookup_path_at_project $p $path`
-    if [ $? -eq 0 ] && [ ! -z "$full_path" ]
-    then
-      echo "$full_path"
-      return 0
-    fi
-  done
-  return 1
-}
-
-lookup_project(){
-  local path=$1
-  check_var path
-  
-  for p in `list_projects`
-  do
-    full_path=`lookup_path_at_project $p $path`
-    if [ $? -eq 0 ] && [ ! -z "$full_path" ]; then
-      echo "$p"
-      return 0
-    fi
-  done
-  return 1
-}
-
-execute(){
-  local path=$1
-  check_var path
-  shift
-  
-  full_path=`lookup_path $path`
-  if [ $? -eq 0 ] && [ ! -z "$full_path" ]
-  then
-    source $full_path
-  else
-    die "Action '$path' not found"
-  fi
 }
 
 try_execute(){
@@ -263,10 +352,30 @@ run(){
  shift
 
  if [ -z $action ]; then
-   dump_all_commands
+    dump_all_commands
  else
-   try_execute $action "$@"
+    try_execute $action "$@"
  fi
 }
 
-run "$@"
+main(){
+  # try to load ~/.artrc
+  [ -f ~/.artrc ] && source ~/.artrc
+
+  # define core env veriables
+  [ -z $ART_USER_NAME  ] && ART_USER_NAME="$USER"
+  [ -z $ART_USER_EMAIL ] && ART_USER_EMAIL="${ART_USER_NAME}@`hostname`"
+
+  [ -z $ART_ROOT ] && ART_ROOT=/opt/art
+  [ -z $ART_REPO_ROOT ] && ART_REPO_ROOT=$ART_ROOT/p
+
+  ARTCLI_HOME=$ART_REPO_ROOT/art-cli
+
+  check_dir "$ART_REPO_ROOT" "$ARTCLI_HOME"
+
+  check_file $ARTCLI_HOME/bin/consts && source $ARTCLI_HOME/bin/consts 
+
+  run "$@"
+}
+
+main "$@"
