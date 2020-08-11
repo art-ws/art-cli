@@ -94,7 +94,7 @@ resolve_relative_action(){
   local caller="$2"
   check_var ARTCLI_CONST_DIR action 
     
-  if starts_with "." "$action" && [ ! -z $caller ]  
+  if ( (starts_with "./" "$action") || (starts_with "../" "$action") ) && [ ! -z $caller ]  
   then
     local delim="/"
     split_string_to_array $action $delim arr_action
