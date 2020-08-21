@@ -1,0 +1,33 @@
+#!/bin/bash
+
+main(){
+  local action=$1
+  local alias_name=$2
+  check_var action
+  check_var alias_name
+
+  local project=`lookup_project $action`
+  [ -z $project ] && die "Action '$action' not found"
+
+  local action_path=`lookup_path_at_project $project $action`
+  [ -z $action_path ] && die "Action '$action' not found for project [ $project ]"
+  check_dir $action_path
+
+  local base_path=`dirname $action_path`
+  local base_name=`basename $action_path`
+  cd $base_path
+
+  ([ -f ./$alias_name ] || [ -d ./$alias_name ]) \
+    && die "Link $base_path/$alias_name already exists"
+
+  if ([ -f ./$base_name ] || [ -d ./$base_name ])
+  then
+    ln -s ./$base_name ./$alias_name \
+      && echo "Created link $base_path/$alias_name for $base_path/$base_name"    
+  else 
+    die "Path $base_path/$base_name not exists"
+  fi
+
+}
+
+main "$@"
