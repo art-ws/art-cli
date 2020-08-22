@@ -142,7 +142,7 @@ lookup_path_at_project(){
   local resolved_action=`resolve_relative_action $action $ARTCLI_CALLER`
   
   local full_path="$base_path/$resolved_action"
-  
+  [ "$action" = "." ] && full_path=`dirname $full_path` 
   # http://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
   if [ -f "$full_path" ] || [ -d "$full_path" ]
   then
@@ -199,7 +199,7 @@ execute(){
 }
 
 exec_project_dir(){
-  local exec_dir=$1
+  local exec_dir="$1"
   check_var exec_dir
   shift
 
@@ -325,18 +325,20 @@ exec_project(){
 }
 
 try_execute(){
-  local action=$1
+  local action="$1"
   check_var action
   shift
+
   local project=`lookup_project $action`
   [ -z $project ] && die "Action '$action' not found"
+  
   exec_project "$project" "$action" "$@"
 }
 
 dump_all_commands(){
   for p in `list_projects`
   do
-    exec_project $p "."
+    exec_project "$p" "."
   done
   return 0
 }
@@ -346,7 +348,7 @@ run(){
  shift
 
  if [ -z $action ]; then
-    dump_all_commands
+    dump_all_commands "$@"
  else
     try_execute $action "$@"
  fi

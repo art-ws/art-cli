@@ -1,0 +1,27 @@
+#!/bin/bash
+
+print_actions(){
+  local path="$1"
+  [ $arg = "--path" ] && echo "$p/$path" || echo "$path"  
+  if [ -d "$path" ]; then
+    for a in `ls -1 $path` 
+    do     
+      print_actions "$path/$a" 
+    done
+  fi
+}
+
+main(){
+  arg="$1"
+  [ -z $arg ] && arg="-1" 
+  for p in `art a/p/ls --path`
+  do
+    cd "$p"    
+    for a in `ls -1` 
+    do 
+      print_actions "$a" 
+    done    
+  done
+}
+
+main "$@"

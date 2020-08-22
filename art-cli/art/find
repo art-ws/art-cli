@@ -1,0 +1,3 @@
+#!/bin/bash
+
+[ -z $1 ] && art a/actions/ls -1 || art a/actions/ls -1 | grep "$@"

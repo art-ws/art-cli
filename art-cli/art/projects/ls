@@ -1,19 +1,27 @@
 #!/bin/bash
 
 main(){
+  local arg="$1"
+  [ -z $arg ] && arg="--colors"
   for project_name in `list_projects`
   do
     local path=`lookup_path_at_project $project_name .`
-    local dir_path=`dirname $path`
-    local link_path=`readlink -f $dir_path`
-    local suffix=""
-    local link_tag=""
-    if [ ! $dir_path = $link_path ]; then
-      suffix=" * $(dirname $link_path)"
-      link_tag="*"
+    if [ ! -z $path ]; then
+      if [ $arg = "--path" ]; then
+        echo "$path"
+      else
+        local dir_path=`dirname $path`
+        local link_path=`readlink -f $dir_path`
+        local suffix=""
+        local link_tag=""
+        if [ ! $dir_path = $link_path ]; then
+          suffix=" * $(dirname $link_path)"
+          link_tag="*"
+        fi
+        echo -e "\E[1;34m[ $project_name ]\E[0;32m$link_tag\E[0;37m - $(dirname $dir_path) \E[0;32m$suffix"
+      fi
     fi
-    echo -e "\E[1;34m[ $project_name ]\E[0;32m$link_tag\E[0;37m - $(dirname $dir_path) \E[0;32m$suffix"
   done
 }
 
-main
+main "$@"
