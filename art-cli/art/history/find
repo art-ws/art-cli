@@ -1,1 +1,3 @@
-cat "$ARTCLI_HISTORY_FILE" | grep "$@"
+term="$1"
+shift
+tail "$@" "$ARTCLI_HISTORY_FILE" | grep "$term" | uniq
