@@ -372,7 +372,7 @@ main(){
 
   check_file $ARTCLI_HOME/bin/consts && source $ARTCLI_HOME/bin/consts 
   
-  [ -z $ARTCLI_CALLER ] && echo "$@" >> $ARTCLI_HISTORY_FILE
+  [ -z $ARTCLI_CALLER ] && [ ARTCLI_HISTORY_ENABLED = "TRUE" ] && echo "$@" >> $ARTCLI_HISTORY_FILE
    
   run "$@"
 }
