@@ -1,0 +1,1 @@
+[ -f "$ARTCLI_HISTORY_FILE" ] && rm "$ARTCLI_HISTORY_FILE"

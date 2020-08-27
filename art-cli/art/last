@@ -1,1 +1,1 @@
-tail "$@" "$ARTCLI_HISTORY_FILE"
+art ./history/ls "$@"
