@@ -356,6 +356,7 @@ run(){
 
 main(){
   # try to load ~/.artrc
+  ARTCLI_HISTORY_ENABLED="FALSE"
   [ -f ~/.artrc ] && source ~/.artrc
 
   # define core env veriables
@@ -370,7 +371,9 @@ main(){
   check_dir "$ART_REPO_ROOT" "$ARTCLI_HOME"
 
   check_file $ARTCLI_HOME/bin/consts && source $ARTCLI_HOME/bin/consts 
-
+  
+  [ -z $ARTCLI_CALLER ] && echo "$@" >> $ARTCLI_HISTORY_FILE
+   
   run "$@"
 }
 
