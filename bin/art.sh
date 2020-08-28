@@ -111,7 +111,7 @@ resolve_relative_action(){
     for item in "${arr_action[@]}"
     do
       i=$((i+1))
-      local dlen==${#item}
+      local dlen=${#item}
       [ $i -gt 1 ] && dlen=1 
       case $item  in
         ".")  len=$((len-$dlen)) ;;        
@@ -125,7 +125,6 @@ resolve_relative_action(){
     for item in "${arr_prefix[@]}"; do arr_result+=("$item"); done
    
     local resolved_action=`array_join "$delim" "${arr_result[@]}"`
-    echo_stderr "XX: $resolved_action"
     echo "$resolved_action"
   else
     echo "$action"
