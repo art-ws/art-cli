@@ -1,1 +1,1 @@
-art ./history/ls "$@"
+art ./history/ls "$@" | grep -v "$ARTCLI_ACTION"

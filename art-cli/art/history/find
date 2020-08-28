@@ -1,1 +1,4 @@
-cat "$ARTCLI_HISTORY_FILE" | grep -v "$ARTCLI_ACTION" | uniq | grep "$@"  
+
+[ -z $1 ] \
+  && art ./ls -n 1000 \
+  || cat "$ARTCLI_HISTORY_FILE" | grep -v "$ARTCLI_ACTION" | uniq --unique | grep "$@"  
