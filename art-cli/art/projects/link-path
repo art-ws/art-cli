@@ -1,0 +1,70 @@
+#!/bin/bash
+
+ARG_VERBOSE=""
+
+# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+    case $key in
+
+        -p|--project)
+        ARG_PROJECT="$2"
+        shift ; shift
+        ;;
+
+        -pf|--project-from)
+        ARG_PROJECT_FROM="$2"
+        shift ; shift
+        ;;
+
+        -pt|--project-to)
+        ARG_PROJECT_TO="$2"
+        shift ; shift
+        ;;
+
+        -f|--from)
+        ARG_FROM="$2"
+        shift ; shift
+        ;;
+
+        -t|--to)
+        ARG_TO="$2"
+        shift ; shift
+        ;;
+
+        -v|-vv|--verbose)
+        ARG_VERBOSE="$1"
+        shift
+        ;;
+
+        *)
+        POSITIONAL+=("$1")
+        shift
+        ;;
+
+    esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+root="$ART_REPO_ROOT"
+target="$ARG_PROJECT_FROM/$ARG_FROM"
+link="$ARG_PROJECT_TO/$ARG_TO"
+
+check_dir $root
+cd $root
+
+path_exists(){ [ -f "$1" ] || [ -d "$1" ] ; }
+
+path_exists "$target" || die "Path '$target' not exists"
+
+mk_link(){
+  link_dir=`dirname "$1"`
+  [ ! -d "$link_dir" ] && mk_dir -p "$link_dir"
+  ln -rs "$target" "$1"
+  echo "Link '$1' to '$target' created."
+}
+
+path_exists "$link" && rm "$link"
+mk_link "$link"
