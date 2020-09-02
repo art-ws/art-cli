@@ -1,1 +1,1 @@
-cat "$ARTCLI_HISTORY_FILE" | uniq --unique | tail "$@" 
+cat "$ARTCLI_HISTORY_FILE" | uniq | tail "$@" 
