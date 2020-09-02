@@ -48,6 +48,11 @@ do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+if [ ! -z $ARG_PROJECT ]; then
+  ARG_PROJECT_FROM="$ARG_PROJECT"
+  ARG_PROJECT_TO="$ARG_PROJECT"  
+fi
+
 root="$ART_REPO_ROOT"
 target="$ARG_PROJECT_FROM/$ARG_FROM"
 link="$ARG_PROJECT_TO/$ARG_TO"
