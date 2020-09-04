@@ -141,7 +141,6 @@ lookup_path_at_project(){
   check_dir $ART_REPO_ROOT
   
   local base_path="$ART_REPO_ROOT/$project/$ARTCLI_CONST_DIR"    
-  
   local resolved_action=`resolve_relative_action $action $ARTCLI_CALLER`
   
   local full_path="$base_path/$resolved_action"
