@@ -1,0 +1,12 @@
+#!/bin/bash
+
+main(){
+  local name="$1"
+  check_var name ARTCLI_VALUES_DIR
+
+  local file_path="$ARTCLI_VALUES_DIR/$name"
+  [ -f "$file_path" ] && cat "$file_path" || return 1
+  return 0
+}
+
+main "$@"
