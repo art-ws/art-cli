@@ -1,19 +1,3 @@
 #!/bin/bash
 
-main(){
-  local name="$1"
-  local value="$2"
-  check_var name ARTCLI_VALUES_DIR
-
-  local file_path="$ARTCLI_VALUES_DIR/$name"
-  if [ -z "$value" ]; then
-    art ./rm "$name" 
-  else
-    local dir_path=`dirname $file_path`
-    [ ! -d "$dir_path" ] && mkdir -p "$dir_path"
-    echo "$value" > "$file_path" 
-  fi
-  return 0
-}
-
-main "$@"
+artcli_set_var "$@"

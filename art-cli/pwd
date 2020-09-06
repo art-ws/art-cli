@@ -1,0 +1,5 @@
+#!/bin/bash
+
+check_var ARTCLI_CWD_VAR
+cwd=`artcli_get_var $ARTCLI_CWD_VAR`
+[ -z "$cwd" ] || echo "$cwd"

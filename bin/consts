@@ -5,3 +5,4 @@ ARTCLI_CONST_ABOUT_FILE=.about.txt
 ARTCLI_CONST_BEFORE_FILE=.before
 ARTCLI_HISTORY_FILE=~/.art-cli-history
 ARTCLI_VALUES_DIR=~/.art-cli-values
+ARTCLI_CWD_VAR=.art-cli/cwd

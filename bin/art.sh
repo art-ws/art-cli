@@ -345,9 +345,67 @@ dump_all_commands(){
   return 0
 }
 
+artcli_get_var(){
+  local name="$1"
+  check_var name ARTCLI_VALUES_DIR
+
+  local file_path="$ARTCLI_VALUES_DIR/$name"
+  [ -f "$file_path" ] && cat "$file_path" || return 1
+  return 0
+}
+
+artcli_rm_var(){
+  local name="$1"
+  check_var name ARTCLI_VALUES_DIR
+
+  if [ "$name" = "--all" ]; then
+    [ -d "$ARTCLI_VALUES_DIR" ] && rm -fr "$ARTCLI_VALUES_DIR" 
+  else
+    local file_path="$ARTCLI_VALUES_DIR/$name"
+    [ -f "$file_path" ] && rm "$file_path"
+  fi
+  
+  return 0
+}
+
+artcli_set_var(){
+  local name="$1"
+  local value="$2"
+  check_var name ARTCLI_VALUES_DIR
+
+  local file_path="$ARTCLI_VALUES_DIR/$name"
+  if [ -z "$value" ]; then
+    artcli_rm_var "$name" 
+  else
+    local dir_path=`dirname $file_path`
+    [ ! -d "$dir_path" ] && mkdir -p "$dir_path"
+    echo "$value" > "$file_path" 
+  fi
+  return 0
+}
+
+join_strings(){
+  local delim="$1"
+  shift
+  local s=""
+  for p in "$@" 
+  do     
+    [ -z "$s" ] && s="$p" || s="${s}${delim}${p}" 
+  done
+  echo "$s"
+}
+
 run(){
- local action=$1
+ local action="$1"
  shift
+ check_var ARTCLI_CWD_VAR
+ local cwd=`artcli_get_var $ARTCLI_CWD_VAR`
+ 
+ [ "$action" != 'cd' ] \
+   && [ "$action" != 'pwd' ] \
+   && [ -z $ARTCLI_CALLER ] \
+   && [ ! -z "$cwd" ] \
+   && action=`join_strings / $cwd $action`
 
  if [ -z $action ]; then
     dump_all_commands "$@"

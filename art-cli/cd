@@ -1,0 +1,10 @@
+#!/bin/bash
+
+main(){
+  local cwd="$1"  
+  check_var ARTCLI_CWD_VAR
+  [ $cwd = "/" ] && cwd=""  
+  artcli_set_var "$ARTCLI_CWD_VAR" "$cwd"
+}
+
+main "$@"
