@@ -3,7 +3,11 @@
 main(){
   local cwd="$1"  
   check_var ARTCLI_CWD_VAR
-  [ $cwd = "/" ] && cwd=""  
+  [ "$cwd" = "/" ] && cwd=""  
+  if [ ! -z "$cwd" ]; then
+    art a/actions/ls | grep "^${cwd}$" \
+      || die "Action '$cwd' not defined"
+  fi
   artcli_set_var "$ARTCLI_CWD_VAR" "$cwd"
 }
 

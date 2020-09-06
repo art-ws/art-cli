@@ -401,12 +401,14 @@ run(){
  check_var ARTCLI_CWD_VAR
  local cwd=`artcli_get_var $ARTCLI_CWD_VAR`
  
+ starts_with "/" "$action" || (
  [ "$action" != 'cd' ] \
    && [ "$action" != 'pwd' ] \
    && [ -z $ARTCLI_CALLER ] \
    && [ ! -z "$cwd" ] \
    && action=`join_strings / $cwd $action`
-
+ )
+ 
  if [ -z $action ]; then
     dump_all_commands "$@"
  else
