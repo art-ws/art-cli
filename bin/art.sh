@@ -142,9 +142,10 @@ lookup_path_at_project(){
   
   local base_path="$ART_REPO_ROOT/$project/$ARTCLI_CONST_DIR"    
   local resolved_action=`resolve_relative_action $action $ARTCLI_CALLER`
-  
+ 
   local full_path="$base_path/$resolved_action"
   [ "$action" = "." ] && full_path=`dirname $full_path` 
+
   # http://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
   if [ -f "$full_path" ] || [ -d "$full_path" ]
   then
@@ -178,7 +179,7 @@ lookup_project(){
   for p in `list_projects`
   do
     local full_path=`lookup_path_at_project $p $action`
-    if [ $? -eq 0 ] && [ ! -z "$full_path" ]; then
+    if ([ $? -eq 0 ] && [ ! -z "$full_path" ]); then
       echo "$p"
       return 0
     fi
@@ -196,7 +197,7 @@ execute(){
   then
     source $full_path
   else
-    die "Action '$path' not found"
+    die "Action '$path' not found."
   fi
 }
 
@@ -330,7 +331,7 @@ try_execute(){
   local action="$1"
   check_var action
   shift
-
+  
   local project=`lookup_project $action`
   [ -z $project ] && die "Action '$action' not found"
   
@@ -401,21 +402,20 @@ run(){
  check_var ARTCLI_CWD_VAR
  local cwd=`artcli_get_var $ARTCLI_CWD_VAR`
  
- starts_with "/" "$action"
- local from_root=$?
+ if ([ -z $ARTCLI_CALLER ] \
+     && [ ! -z "$cwd" ] \
+     && [ "$action" != 'cd' ] \
+     && [ "$action" != 'pwd' ]); then
+  starts_with "/" "$action"
+  local from_root=$?
 
- [ $from_root -ne 0 ] \
-   && [ "$action" != 'cd' ] \
-   && [ "$action" != 'pwd' ] \
-   && [ -z $ARTCLI_CALLER ] \
-   && [ ! -z "$cwd" ] \
-   && action=`join_strings / $cwd $action`
+  [ $from_root -ne 0 ] && action=`join_strings / $cwd $action`  
+ fi 
  
-
- if [ -z $action ]; then
+ if [ -z "$action" ]; then
     dump_all_commands "$@"
  else
-    try_execute $action "$@"
+    try_execute "$action" "$@"
  fi
 }
 
