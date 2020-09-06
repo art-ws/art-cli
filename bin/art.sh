@@ -403,7 +403,7 @@ run(){
  
  starts_with "/" "$action"
  local from_root=$?
- echo_stderr "X: $from_root"
+
  [ $from_root -ne 0 ] \
    && [ "$action" != 'cd' ] \
    && [ "$action" != 'pwd' ] \
