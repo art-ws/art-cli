@@ -86,7 +86,7 @@ resolve_relative_action(){
     check_var break_item  
     for item in "${input[@]}"
     do 
-      [ $item = $break_item ] && break || result+=("$item")    
+      [ "$item" = "$break_item" ] && break || result+=("$item")    
     done
   }
 
