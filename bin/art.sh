@@ -1,5 +1,54 @@
 #!/bin/bash
 
+# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+# https://gist.github.com/jehiah/855086#file-simple_args_parsing-sh-L44
+# https://stackoverflow.com/questions/428109/extract-substring-in-bash
+# https://linuxhint.com/bash_lowercase_uppercase_strings/
+# https://habr.com/ru/company/ruvds/blog/413725/
+parse_args(){
+  export ARGS_POSITIONAL=()
+  export ARGS_KEYS=()
+  export ARGS_ALL=()
+  local i=0    
+  while [ "$1" != "" ]; do
+    key="$1"
+    ARGS_ALL+=("$key")
+    ((i=i+1))
+    case $key in
+
+      --*)
+        PARAM=`echo $1 | awk -F= '{print $1}'`
+        VALUE=`echo $1 | awk -F= '{print $2}'`
+
+        name="ARGS_${PARAM#*--}"
+        name="${name^^}"
+        eval "export ${name}='$VALUE'"
+        ARGS_KEYS+=("$name")     
+      ;;
+
+      -*)
+        name="ARGS_${key#*-}"
+        name="${name^^}"
+        eval "export ${name}='$key'"
+        ARGS_KEYS+=("$name")  
+      ;;
+
+      *)
+        name="ARGS_${key}"
+        name="${name^^}"
+        eval "export ${name}=$i"
+        ARGS_KEYS+=("$name") 
+        ARGS_POSITIONAL+=("$key")
+      ;;
+
+    esac
+    shift
+  done
+  
+  set -- "${ARGS_POSITIONAL[@]}" # restore positional parameters
+
+}
+
 echo_stderr() {
   echo "$@" 1>&2
 }
