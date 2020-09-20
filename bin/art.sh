@@ -10,6 +10,16 @@ parse_args(){
   export ARGS_KEYS=()
   export ARGS_ALL=()
   local i=0    
+  
+  valid_name(){
+     # https://stackoverflow.com/questions/806906/how-do-i-test-if-a-variable-is-a-number-in-bash
+    local re='^\w+$'
+    if [[ $1 =~ $re ]] ; then
+      return 0   
+    fi
+    return 1
+  }
+
   while [ "$1" != "" ]; do
     key="$1"
     ARGS_ALL+=("$key")
@@ -22,23 +32,23 @@ parse_args(){
 
         name="ARGS_${PARAM#*--}"
         name="${name^^}"
-        eval "export ${name}='$VALUE'"
-        ARGS_KEYS+=("$name")     
+        valid_name "$name" \
+          && eval "export ${name}='$VALUE'" \
+          &&  ARGS_KEYS+=("$name")     
       ;;
 
       -*)
         name="ARGS_${key#*-}"
         name="${name^^}"
-        eval "export ${name}='$key'"
-        ARGS_KEYS+=("$name")  
+        valid_name "$name" \
+         && eval "export ${name}='$key'" \
+         && ARGS_KEYS+=("$name")  
       ;;
 
       *)
         name="ARGS_${key}"
         name="${name^^}"
-        eval "export ${name}=$i"
-        ARGS_KEYS+=("$name") 
-        ARGS_POSITIONAL+=("$key")
+        valid_name "$name" && eval "export ${name}=$i" && ARGS_KEYS+=("$name") && ARGS_POSITIONAL+=("$key")
       ;;
 
     esac
