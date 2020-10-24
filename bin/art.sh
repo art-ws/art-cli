@@ -63,39 +63,43 @@ echo_stderr() {
   echo "$@" 1>&2
 }
 
+echo_deprecated(){
+  echo_stderr "DEPRECATED! $@"
+}
+
 die() {
   echo "$@" 1>&2 
   exit 1
 }
 
 check_var(){
-  [ -z $1 ] && die "Variable name not specified"
+  [ -z "$1" ] && die "Variable name not specified"
   for varname in $@
   do
     # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
-    [ -z  ${!varname} ] && die "Required variable '$varname' not defined"
+    [ -z  "${!varname}" ] && die "Required variable '$varname' not defined"
   done
   return 0
 }
 
 check_dir(){
-  [ -z $1 ] && die "Directory path not specified"
+  [ -z "$1" ] && die "Directory path not specified"
   for dir in $@
   do
-    [ ! -d $dir ] && die "Directory path $dir not exists"
+    [ ! -d "$dir" ] && die "Directory path $dir not exists"
   done  
   return 0
 }
 
 check_file(){
-  [ -z $1 ] && die "File path not specified"
-  [ ! -f $1 ] && die "Required file $1 not exists"
+  [ -z "$1" ] && die "File path not specified"
+  [ ! -f "$1" ] && die "Required file $1 not exists"
   return 0
 }
 
 list_projects(){
-  check_dir $ART_REPO_ROOT
-  ls -1 $ART_REPO_ROOT
+  check_dir "$ART_REPO_ROOT"
+  ls -1 "$ART_REPO_ROOT"
 }
 
 starts_with() { case $2 in "$1"*) true;; *) false;; esac; }
@@ -216,7 +220,7 @@ lookup_path_at_project(){
 }
 
 lookup_path(){
-  local path=$1
+  local path="$1"
   check_var path
 
   for p in `list_projects`
@@ -247,14 +251,14 @@ lookup_project(){
 }
 
 execute(){
-  local path=$1
+  local path="$1"
   check_var path
   shift
   
   full_path=`lookup_path $path`
   if [ $? -eq 0 ] && [ ! -z "$full_path" ]
   then
-    source $full_path
+    source "$full_path"
   else
     die "Action '$path' not found."
   fi
