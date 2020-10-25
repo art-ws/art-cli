@@ -9,6 +9,7 @@ parse_args(){
   export ARGS_POSITIONAL=()
   export ARGS_KEYS=()
   export ARGS_ALL=()
+  export ARGS_EXTRA=()
   local i=0    
   
   valid_name(){
@@ -20,9 +21,13 @@ parse_args(){
     return 1
   }
 
+  local extra="false"
   while [ "$1" != "" ]; do
     key="$1"
-    ARGS_ALL+=("$key")
+    [ "$extra" = "true" ] && ARGS_EXTRA+=("$key")    
+    [ "$key" = "--"] && extra="true"
+
+    ARGS_ALL+=("$key")    
     ((i=i+1))
     case $key in
 
