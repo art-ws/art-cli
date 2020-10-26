@@ -25,7 +25,7 @@ parse_args(){
   while [ "$1" != "" ]; do
     key="$1"
     [ "$extra" = "true" ] && ARGS_EXTRA+=("$key")    
-    [ "$key" = "--"] && extra="true"
+    [ "$key" = "--" ] && extra="true"
 
     ARGS_ALL+=("$key")    
     ((i=i+1))
