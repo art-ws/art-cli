@@ -10,6 +10,7 @@ parse_args(){
   export ARGS_KEYS=()
   export ARGS_ALL=()
   export ARGS_EXTRA=()
+  export ARGS_META="ARGS_POSITIONAL ARGS_KEYS ARGS_ALL ARGS_EXTRA"
   local i=0    
   
   valid_name(){
