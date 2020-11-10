@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo_stderr() {
+  echo "$@" 1>&2
+}
+
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 # https://gist.github.com/jehiah/855086#file-simple_args_parsing-sh-L44
 # https://stackoverflow.com/questions/428109/extract-substring-in-bash
@@ -10,7 +14,7 @@ parse_args(){
   export ARGS_KEYS=()
   export ARGS_ALL=()
   export ARGS_EXTRA=()
-  export ARGS_META="ARGS_POSITIONAL ARGS_KEYS ARGS_ALL ARGS_EXTRA"
+  export ARGS_META="ARGS_POSITIONAL[@] ARGS_KEYS[@] ARGS_ALL[@] ARGS_EXTRA[@]"
   local i=0    
   
   valid_name(){
@@ -25,11 +29,13 @@ parse_args(){
   local extra="false"
   while [ "$1" != "" ]; do
     key="$1"
+    
     [ "$extra" = "true" ] && ARGS_EXTRA+=("$key")    
     [ "$key" = "--" ] && extra="true"
 
     ARGS_ALL+=("$key")    
     ((i=i+1))
+
     case $key in
 
       --*)
@@ -40,7 +46,7 @@ parse_args(){
         name="${name^^}"
         valid_name "$name" \
           && eval "export ${name}='$VALUE'" \
-          &&  ARGS_KEYS+=("$name")     
+          && ARGS_KEYS+=("$name")     
       ;;
 
       -*)
@@ -54,7 +60,10 @@ parse_args(){
       *)
         name="ARGS_${key}"
         name="${name^^}"
-        valid_name "$name" && eval "export ${name}=$i" && ARGS_KEYS+=("$name") && ARGS_POSITIONAL+=("$key")
+        valid_name "$name" \
+          && eval "export ${name}=$i" \
+          && ARGS_KEYS+=("$name") \
+          && ARGS_POSITIONAL+=("$key")
       ;;
 
     esac
@@ -63,10 +72,6 @@ parse_args(){
   
   set -- "${ARGS_POSITIONAL[@]}" # restore positional parameters
 
-}
-
-echo_stderr() {
-  echo "$@" 1>&2
 }
 
 echo_deprecated(){
