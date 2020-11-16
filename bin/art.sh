@@ -62,7 +62,6 @@ parse_args(){
         name="${name^^}"
         valid_name "$name" \
           && eval "export ${name}=$i" \
-          && ARGS_KEYS+=("$name") \
           && ARGS_POSITIONAL+=("$key")
       ;;
 
