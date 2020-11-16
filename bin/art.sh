@@ -496,7 +496,7 @@ log(){
   [ -z "$ARTCLI_LOGGER" ] && return 0
   [ -z "$1" ] && return 0
   [ "$1" = "$ARTCLI_LOGGER" ] && return 0
-  art $ARTCLI_LOGGER "art $@"
+  art $ARTCLI_LOGGER "$@"
 }
 
 main(){
