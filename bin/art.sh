@@ -492,9 +492,17 @@ run(){
  fi
 }
 
+log(){
+  [ -z "$ARTCLI_LOGGER" ] && return 0
+  [ -z "$1" ] && return 0
+  [ "$1" = "$ARTCLI_LOGGER" ] && return 0
+  art $ARTCLI_LOGGER "art $@"
+}
+
 main(){
   # try to load ~/.artrc
   ARTCLI_HISTORY_ENABLED="FALSE"
+  ARTCLI_LOGGER=""
   [ -f ~/.artrc ] && source ~/.artrc
 
   # define core env veriables
@@ -510,7 +518,9 @@ main(){
 
   check_file $ARTCLI_HOME/bin/consts && source $ARTCLI_HOME/bin/consts 
   
-  [ -z $ARTCLI_CALLER ] && [ $ARTCLI_HISTORY_ENABLED = "TRUE" ] && echo "$@" >> $ARTCLI_HISTORY_FILE
+  [ -z $ARTCLI_CALLER ] && [ $ARTCLI_HISTORY_ENABLED = "TRUE" ] \
+    && echo "$@" >> $ARTCLI_HISTORY_FILE \
+    && log "$@"
    
   run "$@"
 }
